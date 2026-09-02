@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Analytics — FarmConnect AI</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+</head>
+<body class="app-bg d-flex flex-column min-vh-100">
+
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="flex-grow-1 py-4">
+        <div class="container">
+            <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+            <!-- Header -->
+            <div class="page-header-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div>
+                    <h2 class="page-title mb-0"><i class="bi bi-graph-up text-success"></i> Farmer Sales Analytics</h2>
+                    <p class="page-subtitle">Real-time revenue, completed trades, and crop performance aggregated directly from your MySQL orders.</p>
+                </div>
+            </div>
+
+            <!-- Stats Overview Cards -->
+            <div class="row g-4 mb-4">
+                <div class="col-6 col-md-3">
+                    <div class="stat-widget d-flex align-items-center gap-3">
+                        <div class="stat-icon-wrapper stat-icon-green">
+                            <i class="bi bi-currency-rupee"></i>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold mb-0 text-dark" th:text="'₹' + ${analytics.totalSalesRevenue}">₹0</h4>
+                            <div class="text-muted small">Total Realized Revenue</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-widget d-flex align-items-center gap-3">
+                        <div class="stat-icon-wrapper stat-icon-blue">
+                            <i class="bi bi-check2-circle"></i>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold mb-0 text-dark" th:text="${analytics.completedOrders}">0</h4>
+                            <div class="text-muted small">Completed Orders</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-widget d-flex align-items-center gap-3">
+                        <div class="stat-icon-wrapper stat-icon-amber">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold mb-0 text-dark" th:text="${analytics.totalQuantitySold} + ' kg'">0 kg</h4>
+                            <div class="text-muted small">Quantity Sold</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-widget d-flex align-items-center gap-3">
+                        <div class="stat-icon-wrapper stat-icon-purple">
+                            <i class="bi bi-flower1"></i>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold mb-0 text-dark" th:text="${analytics.activeListings}">0</h4>
+                            <div class="text-muted small">Active Listings</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="farm-card p-4 h-100">
+                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-pie-chart text-success me-2"></i> Revenue by Crop Type</h5>
+                        <div th:if="${analytics.completedOrders == 0}" class="empty-state py-4">
+                            <div class="empty-state-icon"><i class="bi bi-graph-up"></i></div>
+                            <h6 class="empty-state-title">No completed sales yet</h6>
+                            <p class="empty-state-text">Your revenue breakdown by crop will appear here as soon as you complete your first order.</p>
+                        </div>
+                        <div th:unless="${analytics.completedOrders == 0}" style="max-height: 280px; position: relative;">
+                            <canvas id="cropRevenueChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="farm-card p-4 h-100">
+                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-bar-chart-steps text-primary me-2"></i> Order Status Breakdown</h5>
+                        <div th:if="${analytics.totalOrders == 0}" class="empty-state py-4">
+                            <div class="empty-state-icon"><i class="bi bi-bar-chart"></i></div>
+                            <h6 class="empty-state-title">No orders on record</h6>
+                            <p class="empty-state-text">Order progress tracking will be charted here once buyers place orders.</p>
+                        </div>
+                        <div th:unless="${analytics.totalOrders == 0}" style="max-height: 280px; position: relative;">
+                            <canvas id="orderStatusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/app.js}"></script>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const cropSalesData = /*[[${analytics.cropSalesDistribution}]]*/ {};
+        const orderStatusData = /*[[${analytics.orderStatusDistribution}]]*/ {};
+
+        const cropLabels = Object.keys(cropSalesData);
+        const cropValues = Object.values(cropSalesData);
+
+        if (cropLabels.length > 0) {
+            new Chart(document.getElementById('cropRevenueChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: cropLabels,
+                    datasets: [{
+                        data: cropValues,
+                        backgroundColor: ['#16a34a', '#0284c7', '#d97706', '#9333ea', '#e11d48']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        const statusLabels = Object.keys(orderStatusData).map(s => s.replace('_', ' '));
+        const statusValues = Object.values(orderStatusData);
+
+        if (statusLabels.length > 0) {
+            new Chart(document.getElementById('orderStatusChart'), {
+                type: 'bar',
+                data: {
+                    labels: statusLabels,
+                    datasets: [{
+                        label: 'Orders',
+                        data: statusValues,
+                        backgroundColor: '#15803d',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+        /*]]>*/
+    </script>
+</body>
+</html>

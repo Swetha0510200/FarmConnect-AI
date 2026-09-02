@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farmer Dashboard — FarmConnect AI</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link th:href="@{/css/custom.css}" rel="stylesheet">
+</head>
+<body class="app-bg d-flex flex-column min-vh-100">
+
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+    <main class="flex-grow-1 py-4">
+        <div class="container">
+            <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+            <!-- Top Welcome Header Card -->
+            <div class="page-header-card d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">
+                            <i class="bi bi-geo-alt-fill me-1"></i> <span th:text="${profile != null ? profile.getFullLocation() : 'Regional Farm'}">Location</span>
+                        </span>
+                        <span th:if="${profile != null && profile.farmingType != null}" class="badge bg-light border text-muted px-2 py-1" th:text="${profile.farmingType}">Traditional</span>
+                    </div>
+                    <h2 class="page-title mb-0">Namaste, <span th:text="${farmer.name}">Farmer</span>!</h2>
+                    <p class="page-subtitle">Manage your harvest listings, evaluate matched buyers, and track direct orders.</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <a th:href="@{/farmer/add-crop}" class="btn btn-farm-primary shadow-sm">
+                        <i class="bi bi-plus-circle me-1"></i> List New Crop
+                    </a>
+                    <a th:href="@{/farmer/orders}" class="btn btn-farm-outline">
+                        <i class="bi bi-box-seam me-1"></i> View Orders
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stats Overview Row -->
+            <div class="row g-4 mb-4">
+                <div class="col-6 col-md-3">
+                    <div class="stat-widget d-flex align-items-center gap-3">
+                        <div class="stat-icon-wrapper stat-icon-green">
+                            <i class="bi bi-flower1"></i>
+                        </div>
+                        <div>
+                            <h3 class="fw-bold mb-0 text-dark" th:text="${#lists.size(listings)}">0</h3>
+                            <div class="text-muted small">Listed Crops</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-widget d-flex align-items-center gap-3">
+                        <div class="stat-icon-wrapper stat-icon-blue">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
+                        <div>
+                            <h3 class="fw-bold mb-0 text-dark" th:text="${#lists.size(orders)}">0</h3>
+                            <div class="text-muted small">Total Orders</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-widget d-flex align-items-center gap-3">
+                        <div class="stat-icon-wrapper stat-icon-amber">
+                            <i class="bi bi-stars"></i>
+                        </div>
+                        <div>
+                            <h3 class="fw-bold mb-0 text-dark" th:text="${#lists.size(topMatches)}">0</h3>
+                            <div class="text-muted small">Buyer Opportunities</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stat-widget d-flex align-items-center gap-3">
+                        <div class="stat-icon-wrapper stat-icon-purple">
+                            <i class="bi bi-bell"></i>
+                        </div>
+                        <div>
+                            <h3 class="fw-bold mb-0 text-dark" th:text="${unreadCount}">0</h3>
+                            <div class="text-muted small">Notifications</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <!-- My Active Crop Harvests -->
+                <div class="col-lg-7">
+                    <div class="farm-card h-100">
+                        <div class="farm-card-header">
+                            <h5 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                                <i class="bi bi-basket2 text-success"></i> My Listed Crop Harvests
+                            </h5>
+                            <a th:href="@{/farmer/crops}" class="btn btn-sm btn-outline-success">View All (<span th:text="${#lists.size(listings)}">0</span>)</a>
+                        </div>
+                        <div class="farm-card-body p-0">
+                            <div th:if="${#lists.isEmpty(listings)}" class="empty-state py-5">
+                                <div class="empty-state-icon"><i class="bi bi-flower1"></i></div>
+                                <h5 class="empty-state-title">No crop listings yet</h5>
+                                <p class="empty-state-text">Add your first crop harvest to automatically get matched with suitable bulk buyers.</p>
+                                <a th:href="@{/farmer/add-crop}" class="btn btn-farm-primary btn-sm px-4">
+                                    <i class="bi bi-plus-circle me-1"></i> Add Crop Harvest
+                                </a>
+                            </div>
+
+                            <div th:unless="${#lists.isEmpty(listings)}" class="table-responsive">
+                                <table class="table table-custom">
+                                    <thead>
+                                        <tr>
+                                            <th>Crop</th>
+                                            <th>Quantity</th>
+                                            <th>Expected Price</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="crop, iter : ${listings}" th:if="${iter.index < 4}">
+                                            <td class="fw-bold text-dark">
+                                                <span th:text="${crop.cropName}">Tomato</span>
+                                                <small class="text-muted d-block" th:text="${crop.qualityGrade}">Grade A</small>
+                                            </td>
+                                            <td th:text="${crop.quantity} + ' ' + ${crop.unit}">500 kg</td>
+                                            <td class="fw-bold text-success" th:text="'₹' + ${crop.expectedPrice} + '/' + ${crop.unit}">₹24/kg</td>
+                                            <td>
+                                                <span th:if="${crop.status.name() == 'ACTIVE'}" class="badge-status badge-status-active">Active</span>
+                                                <span th:if="${crop.status.name() == 'COMPLETED'}" class="badge-status badge-status-completed">Sold Out</span>
+                                                <span th:if="${crop.status.name() == 'INACTIVE'}" class="badge-status badge-status-inactive">Inactive</span>
+                                            </td>
+                                            <td>
+                                                <div class="d-flex gap-1">
+                                                    <a th:href="@{'/farmer/buyer-matches/' + ${crop.id}}" class="btn btn-sm btn-farm-outline px-2" title="View Matched Buyers">
+                                                        <i class="bi bi-stars"></i>
+                                                    </a>
+                                                    <a th:href="@{'/farmer/edit-crop/' + ${crop.id}}" class="btn btn-sm btn-light border px-2" title="Edit">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Matched Buyer Opportunities -->
+                <div class="col-lg-5">
+                    <div class="farm-card h-100">
+                        <div class="farm-card-header">
+                            <h5 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                                <i class="bi bi-stars text-warning"></i> Suitable Buyers
+                            </h5>
+                            <span class="badge bg-success-subtle text-success">AI Match</span>
+                        </div>
+                        <div class="farm-card-body p-3">
+                            <div th:if="${#lists.isEmpty(topMatches)}" class="empty-state py-4">
+                                <div class="empty-state-icon"><i class="bi bi-search"></i></div>
+                                <h6 class="empty-state-title">No buyer requirements matched yet</h6>
+                                <p class="empty-state-text">When buyers post crop requirements that match your listed harvest, they will appear here.</p>
+                            </div>
+
+                            <div th:unless="${#lists.isEmpty(topMatches)}" class="d-flex flex-column gap-3">
+                                <div th:each="m : ${topMatches}" class="p-3 border rounded-3 bg-light d-flex flex-column justify-content-between">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h6 class="fw-bold text-dark mb-0" th:text="${m.buyerRequirement.buyer.buyerProfile != null ? m.buyerRequirement.buyer.buyerProfile.businessName : m.buyerRequirement.buyer.name}">ABC Wholesale</h6>
+                                            <small class="text-muted"><i class="bi bi-geo-alt me-1"></i> <span th:text="${m.distanceKm} + ' km away (' + ${m.locationSummary} + ')'">25 km</span></small>
+                                        </div>
+                                        <span class="badge-suitability-high" th:text="${m.suitabilityScore} + '%'">94%</span>
+                                    </div>
+                                    <div class="small text-muted mb-2">
+                                        <div>Need: <strong class="text-dark" th:text="${m.buyerRequirement.requiredQuantity} + ' ' + ${m.buyerRequirement.unit} + ' ' + ${m.buyerRequirement.cropName}">500 kg Tomato</strong></div>
+                                        <div>Budget: <strong class="text-success">₹<span th:text="${m.buyerRequirement.minimumPrice}">20</span> – ₹<span th:text="${m.buyerRequirement.maximumPrice}">26</span>/<span th:text="${m.buyerRequirement.unit}">kg</span></strong></div>
+                                    </div>
+                                    <a th:href="@{'/farmer/buyer-matches/' + ${m.cropListing.id}}" class="btn btn-sm btn-farm-primary w-100">
+                                        <i class="bi bi-eye me-1"></i> View Match Breakdown
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders Section -->
+            <div class="farm-card">
+                <div class="farm-card-header">
+                    <h5 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                        <i class="bi bi-receipt text-primary"></i> Recent Incoming Orders
+                    </h5>
+                    <a th:href="@{/farmer/orders}" class="btn btn-sm btn-outline-secondary">All Orders</a>
+                </div>
+                <div class="farm-card-body p-0">
+                    <div th:if="${#lists.isEmpty(orders)}" class="empty-state py-4">
+                        <p class="text-muted small mb-0">No orders received from buyers yet.</p>
+                    </div>
+
+                    <div th:unless="${#lists.isEmpty(orders)}" class="table-responsive">
+                        <table class="table table-custom">
+                            <thead>
+                                <tr>
+                                    <th>Order #</th>
+                                    <th>Date</th>
+                                    <th>Buyer Name</th>
+                                    <th>Crop &amp; Quantity</th>
+                                    <th>Total Amount</th>
+                                    <th>Status</th>
+                                    <th>Payment</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="ord, iter : ${orders}" th:if="${iter.index < 5}">
+                                    <td class="fw-bold text-dark" th:text="${ord.orderNumber}">FC-2026-001</td>
+                                    <td class="small text-muted" th:text="${#temporals.format(ord.orderDate, 'dd MMM yyyy')}">01 Sep 2026</td>
+                                    <td th:text="${ord.buyer.buyerProfile != null ? ord.buyer.buyerProfile.businessName : ord.buyer.name}">ABC Traders</td>
+                                    <td>
+                                        <span class="fw-semibold text-dark" th:text="${ord.cropName}">Tomato</span>
+                                        <small class="text-muted d-block" th:text="${ord.quantity} + ' ' + ${ord.unit}">500 kg</small>
+                                    </td>
+                                    <td class="fw-bold text-success" th:text="'₹' + ${ord.totalAmount}">₹12,000</td>
+                                    <td>
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle" th:text="${ord.status.name().replace('_', ' ')}">PLACED</span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${ord.paymentRecord != null && ord.paymentRecord.paymentStatus.name() == 'RECEIVED'}" class="badge bg-success-subtle text-success border border-success-subtle">Received</span>
+                                        <span th:unless="${ord.paymentRecord != null && ord.paymentRecord.paymentStatus.name() == 'RECEIVED'}" class="badge bg-warning-subtle text-warning text-dark border border-warning-subtle">Pending</span>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{'/farmer/orders/' + ${ord.id}}" class="btn btn-sm btn-farm-primary">Manage</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

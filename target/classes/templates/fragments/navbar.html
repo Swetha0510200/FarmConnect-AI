@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-farm sticky-top">
+    <div class="container">
+        <!-- Brand Logo & Name -->
+        <a class="navbar-brand-custom" th:href="@{/}">
+            <div class="brand-icon-box">
+                <i class="bi bi-tree"></i>
+            </div>
+            <div>
+                <div class="brand-title">FarmConnect<span>AI</span></div>
+                <div class="brand-tagline">Smart Agri Marketplace</div>
+            </div>
+        </a>
+
+        <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarMain">
+            <ul class="navbar-nav me-auto ms-lg-4 mb-2 mb-lg-0 gap-1">
+                <!-- Farmer Role Navigation -->
+                <li class="nav-item" sec:authorize="hasRole('FARMER')">
+                    <a class="nav-link-custom" th:href="@{/farmer/dashboard}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('FARMER')">
+                    <a class="nav-link-custom" th:href="@{/farmer/crops}"><i class="bi bi-flower1"></i> My Crops</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('FARMER')">
+                    <a class="nav-link-custom" th:href="@{/farmer/orders}"><i class="bi bi-box-seam"></i> Orders</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('FARMER')">
+                    <a class="nav-link-custom" th:href="@{/farmer/analytics}"><i class="bi bi-graph-up"></i> Sales Analytics</a>
+                </li>
+
+                <!-- Buyer Role Navigation -->
+                <li class="nav-item" sec:authorize="hasRole('BUYER')">
+                    <a class="nav-link-custom" th:href="@{/buyer/dashboard}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('BUYER')">
+                    <a class="nav-link-custom" th:href="@{/buyer/search-crops}"><i class="bi bi-search"></i> Browse Crops</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('BUYER')">
+                    <a class="nav-link-custom" th:href="@{/buyer/requirements}"><i class="bi bi-clipboard-plus"></i> Requirements</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('BUYER')">
+                    <a class="nav-link-custom" th:href="@{/buyer/orders}"><i class="bi bi-bag-check"></i> My Purchases</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('BUYER')">
+                    <a class="nav-link-custom" th:href="@{/buyer/saved-listings}"><i class="bi bi-heart"></i> Saved</a>
+                </li>
+
+                <!-- Admin Role Navigation -->
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link-custom" th:href="@{/admin/dashboard}"><i class="bi bi-shield-check"></i> Overview</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link-custom" th:href="@{/admin/users}"><i class="bi bi-people"></i> Users</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link-custom" th:href="@{/admin/buyers}"><i class="bi bi-patch-check"></i> Verify Buyers</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link-custom" th:href="@{/admin/listings}"><i class="bi bi-card-list"></i> Listings</a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link-custom" th:href="@{/admin/orders}"><i class="bi bi-receipt"></i> Orders</a>
+                </li>
+
+                <!-- Public Demand Insights -->
+                <li class="nav-item">
+                    <a class="nav-link-custom" th:href="@{/insights/demand}"><i class="bi bi-bar-chart-line"></i> Demand Insights</a>
+                </li>
+            </ul>
+
+            <!-- Right Actions & User Profile -->
+            <div class="d-flex align-items-center gap-2">
+                <!-- Anonymous Visitors -->
+                <div sec:authorize="isAnonymous()" class="d-flex gap-2">
+                    <a th:href="@{/auth/login}" class="btn btn-farm-outline btn-sm px-3">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+                    </a>
+                    <div class="dropdown">
+                        <button class="btn btn-farm-primary btn-sm dropdown-toggle px-3" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-plus me-1"></i> Register
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                            <li><a class="dropdown-item py-2" th:href="@{/auth/register-farmer}"><i class="bi bi-flower1 text-success me-2"></i> Join as Farmer / FPO</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item py-2" th:href="@{/auth/register-buyer}"><i class="bi bi-building text-primary me-2"></i> Join as Buyer / Wholesaler</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Authenticated Users -->
+                <div sec:authorize="isAuthenticated()" class="d-flex align-items-center gap-3">
+                    <!-- Notifications Icon -->
+                    <a th:href="@{/notifications}" class="btn btn-light position-relative p-2 border rounded-circle" title="Notifications">
+                        <i class="bi bi-bell fs-6 text-dark"></i>
+                        <span id="navbar-notif-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" style="font-size: 0.65rem;">
+                            0
+                        </span>
+                    </a>
+
+                    <!-- User Dropdown Menu -->
+                    <div class="dropdown">
+                        <button class="btn user-badge-pill dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <div class="avatar-initial">
+                                <span sec:authentication="name" th:text="${#strings.substring(#authentication.name, 0, 1).toUpperCase()}">U</span>
+                            </div>
+                            <span class="d-none d-md-inline text-truncate" style="max-width: 140px;" sec:authentication="name">User</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2 p-2" style="min-width: 220px;">
+                            <li class="px-3 py-2 border-bottom mb-2">
+                                <div class="fw-bold text-dark text-truncate" sec:authentication="name">User</div>
+                                <div class="small text-muted" sec:authorize="hasRole('FARMER')">Farmer Account</div>
+                                <div class="small text-muted" sec:authorize="hasRole('BUYER')">Buyer Account</div>
+                                <div class="small text-muted" sec:authorize="hasRole('ADMIN')">Administrator</div>
+                            </li>
+
+                            <li sec:authorize="hasRole('FARMER')">
+                                <a class="dropdown-item py-2 rounded-2" th:href="@{/farmer/profile}"><i class="bi bi-person-gear me-2 text-success"></i> Farm Profile</a>
+                            </li>
+                            <li sec:authorize="hasRole('BUYER')">
+                                <a class="dropdown-item py-2 rounded-2" th:href="@{/buyer/profile}"><i class="bi bi-building-gear me-2 text-primary"></i> Company Profile</a>
+                            </li>
+
+                            <li><hr class="dropdown-divider my-1"></li>
+                            <li>
+                                <form th:action="@{/auth/logout}" method="post">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                                    <button type="submit" class="dropdown-item py-2 text-danger rounded-2">
+                                        <i class="bi bi-box-arrow-right me-2"></i> Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+</html>

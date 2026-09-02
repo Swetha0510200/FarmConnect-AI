@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" fill="none">
+    <rect width="36" height="36" rx="8" fill="#15803d"/>
+    <path d="M18 10C18 10 14 14 14 19C14 22 16 25 18 26C20 25 22 22 22 19C22 14 18 10 18 10Z" fill="#86efac"/>
+    <path d="M18 19C18 19 22 16 26 18C28 20 28 23 26 25C24 25 21 24 18 21" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
+    <path d="M18 21C18 21 14 18 10 20C8 22 8 25 10 27C12 27 15 26 18 23" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
+    <text x="44" y="24" font-family="'Inter', sans-serif" font-weight="800" font-size="17" fill="#15803d">FarmConnect</text>
+    <text x="145" y="24" font-family="'Inter', sans-serif" font-weight="700" font-size="14" fill="#0284c7">AI</text>
+</svg>
