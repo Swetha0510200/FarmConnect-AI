@@ -29,7 +29,8 @@ public class FarmerController {
     private final OrderService orderService;
     private final PaymentService paymentService;
     private final DeliveryService deliveryService;
-        private final AnalyticsService analyticsService;
+    private final MarketPriceService marketPriceService;
+    private final AnalyticsService analyticsService;
     private final NotificationService notificationService;
 
     public FarmerController(UserService userService,
@@ -39,7 +40,8 @@ public class FarmerController {
                             OrderService orderService,
                             PaymentService paymentService,
                             DeliveryService deliveryService,
-                                                        AnalyticsService analyticsService,
+                            MarketPriceService marketPriceService,
+                            AnalyticsService analyticsService,
                             NotificationService notificationService) {
         this.userService = userService;
         this.cropListingService = cropListingService;
@@ -48,7 +50,8 @@ public class FarmerController {
         this.orderService = orderService;
         this.paymentService = paymentService;
         this.deliveryService = deliveryService;
-                this.analyticsService = analyticsService;
+        this.marketPriceService = marketPriceService;
+        this.analyticsService = analyticsService;
         this.notificationService = notificationService;
     }
 
@@ -74,12 +77,16 @@ public class FarmerController {
         topMatches.sort((a, b) -> Integer.compare(b.getSuitabilityScore(), a.getSuitabilityScore()));
         List<MatchResultDto> displayedMatches = topMatches.stream().limit(4).toList();
 
+        // Fetch recent market prices
+        List<MarketPrice> recentMarketPrices = marketPriceService.getAllMarketPrices().stream().limit(4).toList();
+
         model.addAttribute("farmer", farmer);
         model.addAttribute("profile", farmer.getFarmerProfile());
         model.addAttribute("listings", listings);
         model.addAttribute("orders", orders);
         model.addAttribute("topMatches", displayedMatches);
-                model.addAttribute("notifications", notificationService.getRecentUserNotifications(farmer));
+        model.addAttribute("recentMarketPrices", recentMarketPrices);
+        model.addAttribute("notifications", notificationService.getRecentUserNotifications(farmer));
         model.addAttribute("unreadCount", notificationService.getUnreadCount(farmer));
 
         return "farmer/dashboard";

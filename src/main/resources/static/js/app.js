@@ -1,30 +1,23 @@
 /**
- * FarmConnect AI - Modern AgriTech Platform Interactive UI Scripts
- * SIH26033
+ * FarmConnect AI - Client-side Interactive Functions (SIH26033)
  */
 
 document.addEventListener('DOMContentLoaded', function () {
-    // 1. Auto-dismiss alert banners smoothly
+    // Auto-dismiss alert banners after 5 seconds
     const alerts = document.querySelectorAll('.alert-dismissible');
     alerts.forEach(function (alert) {
         setTimeout(function () {
             const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
             if (bsAlert) bsAlert.close();
-        }, 5000);
+        }, 6000);
     });
 
-    // 2. Real-time unread notification badge polling
+    // Check unread notifications periodically if user is logged in
     const notifBadge = document.getElementById('navbar-notif-badge');
     if (notifBadge) {
         fetchUnreadCount();
-        setInterval(fetchUnreadCount, 25000);
+        setInterval(fetchUnreadCount, 30000);
     }
-
-    // 3. Initialize Bootstrap tooltips if any
-    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
-    });
 });
 
 function fetchUnreadCount() {
@@ -56,12 +49,10 @@ function markNotificationRead(id, buttonElem) {
         if (data.success) {
             const item = document.getElementById('notif-item-' + id);
             if (item) {
-                item.classList.remove('unread-notification');
-                item.classList.add('read-notification');
+                item.classList.remove('bg-light');
+                item.classList.add('opacity-75');
             }
-            if (buttonElem) {
-                buttonElem.outerHTML = '<span class="badge bg-light text-muted border"><i class="bi bi-check2"></i> Read</span>';
-            }
+            if (buttonElem) buttonElem.remove();
             fetchUnreadCount();
         }
     });
@@ -72,13 +63,28 @@ function getCsrfToken() {
     return tokenMeta ? tokenMeta.getAttribute('content') : '';
 }
 
-// Global Order Total Price Calculator
-function calculateOrderTotal(qtyInputId, priceInputId, totalDisplayId) {
-    const qty = parseFloat(document.getElementById(qtyInputId)?.value) || 0;
-    const price = parseFloat(document.getElementById(priceInputId)?.value) || 0;
-    const total = Math.round(qty * price * 100) / 100;
-    const display = document.getElementById(totalDisplayId);
-    if (display) {
-        display.textContent = '?' + total.toLocaleString('en-IN');
-    }
+// Interactive helper for Farmer Add Crop Price Comparison
+function checkMarketComparison(cropInputId, priceInputId, targetDisplayId) {
+    const crop = document.getElementById(cropInputId)?.value;
+    const price = document.getElementById(priceInputId)?.value;
+    const display = document.getElementById(targetDisplayId);
+
+    if (!crop || !price || !display) return;
+
+    fetch('/market/compare?crop=' + encodeURIComponent(crop) + '&price=' + encodeURIComponent(price))
+        .then(res => res.json())
+        .then(data => {
+            if (data.hasComparison) {
+                display.innerHTML = `
+                    <div class="alert alert-info py-2 px-3 mb-0 mt-2 small">
+                        <strong><i class="bi bi-info-circle-fill me-1"></i> Market Comparison:</strong>
+                        Prevailing price in ${data.marketName || 'nearby mandis'} is <strong>?${data.marketPrice}/kg</strong>.
+                        <span class="badge ${data.badgeClass} ms-1">${data.analysis}</span>
+                    </div>
+                `;
+            } else {
+                display.innerHTML = '';
+            }
+        })
+        .catch(err => console.debug('Comparison lookup:', err));
 }

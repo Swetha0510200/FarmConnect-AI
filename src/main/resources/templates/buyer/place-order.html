@@ -3,17 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Place Order — FarmConnect AI</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <title>Place Order ? FarmConnect AI</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link th:href="@{/css/custom.css}" rel="stylesheet">
 </head>
-<body class="app-bg d-flex flex-column min-vh-100">
+<body class="bg-light d-flex flex-column min-vh-100">
 
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
@@ -23,10 +19,10 @@
 
             <div class="row justify-content-center">
                 <div class="col-lg-8">
-                    <div class="farm-card p-4 p-md-5 bg-white shadow">
+                    <div class="farm-card p-4 p-md-5 bg-white">
                         <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
-                            <div class="stat-icon-wrapper stat-icon-green" style="width: 48px; height: 48px;">
-                                <i class="bi bi-cart-plus fs-4"></i>
+                            <div class="stat-icon-wrapper stat-icon-green">
+                                <i class="bi bi-bag-check fs-4"></i>
                             </div>
                             <div>
                                 <h3 class="fw-bold text-dark mb-0">Place Order with Farmer</h3>
@@ -40,7 +36,7 @@
                                 <div class="col-md-6"><strong>Crop:</strong> <span th:text="${listing.cropName}">Tomato</span> (<span th:text="${listing.qualityGrade}">Grade A</span>)</div>
                                 <div class="col-md-6"><strong>Farmer:</strong> <span th:text="${listing.farmer.name}">Farmer Name</span></div>
                                 <div class="col-md-6"><strong>Max Available:</strong> <span th:text="${listing.quantity} + ' ' + ${listing.unit}">500 kg</span></div>
-                                <div class="col-md-6"><strong>Farmer Price:</strong> <span class="text-success fw-bold" th:text="'₹' + ${listing.expectedPrice} + '/' + ${listing.unit}">₹24/kg</span></div>
+                                <div class="col-md-6"><strong>Farmer Price:</strong> <span class="text-success fw-bold" th:text="'?' + ${listing.expectedPrice} + '/' + ${listing.unit}">?24/kg</span></div>
                             </div>
                         </div>
 
@@ -50,17 +46,17 @@
 
                             <div class="row g-3 mb-4">
                                 <div class="col-md-6">
-                                    <label for="quantity" class="form-label">Order Quantity (<span th:text="${listing.unit}">kg</span>) <span class="text-danger">*</span></label>
+                                    <label for="quantity" class="form-label small fw-semibold text-dark">Order Quantity (<span th:text="${listing.unit}">kg</span>) <span class="text-danger">*</span></label>
                                     <input type="number" step="0.1" class="form-control" id="quantity" th:field="*{quantity}" oninput="calcTotal()" required>
                                     <div class="text-danger small mt-1" th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"></div>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="agreedPrice" class="form-label">Agreed Price (₹ per <span th:text="${listing.unit}">kg</span>) <span class="text-danger">*</span></label>
+                                    <label for="agreedPrice" class="form-label small fw-semibold text-dark">Agreed Price (? per <span th:text="${listing.unit}">kg</span>) <span class="text-danger">*</span></label>
                                     <input type="number" step="0.5" class="form-control" id="agreedPrice" th:field="*{agreedPrice}" oninput="calcTotal()" required>
                                     <div class="text-danger small mt-1" th:if="${#fields.hasErrors('agreedPrice')}" th:errors="*{agreedPrice}"></div>
                                 </div>
                                 <div class="col-12">
-                                    <label for="notes" class="form-label">Special Delivery / Order Notes</label>
+                                    <label for="notes" class="form-label small fw-semibold text-dark">Special Delivery / Order Notes</label>
                                     <textarea class="form-control" id="notes" th:field="*{notes}" rows="2" placeholder="e.g. Please sort into 25kg crates. Pickup will be arranged tomorrow morning."></textarea>
                                 </div>
                             </div>
@@ -71,7 +67,7 @@
                                     <span class="text-success fw-semibold">Estimated Total Amount:</span>
                                     <div class="small text-muted">Payable directly to farmer upon delivery confirmation.</div>
                                 </div>
-                                <h3 class="fw-bold text-success mb-0" id="totalDisplay">₹0</h3>
+                                <h3 class="fw-bold text-success mb-0" id="totalDisplay">?0</h3>
                             </div>
 
                             <div class="d-flex justify-content-between align-items-center pt-3 border-top">
@@ -95,7 +91,7 @@
             const qty = parseFloat(document.getElementById('quantity')?.value) || 0;
             const price = parseFloat(document.getElementById('agreedPrice')?.value) || 0;
             const total = Math.round(qty * price * 100) / 100;
-            document.getElementById('totalDisplay').textContent = '₹' + total.toLocaleString('en-IN');
+            document.getElementById('totalDisplay').textContent = '?' + total.toLocaleString();
         }
         document.addEventListener('DOMContentLoaded', calcTotal);
     </script>

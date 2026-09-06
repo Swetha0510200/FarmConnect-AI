@@ -1,5 +1,6 @@
 package com.farmconnect.controller;
 
+import com.farmconnect.entity.Role;
 import com.farmconnect.service.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +16,7 @@ public class AdminController {
     private final BuyerRequirementService requirementService;
     private final OrderService orderService;
     private final AnalyticsService analyticsService;
+    private final MarketPriceService marketPriceService;
     private final DemandInsightsService demandInsightsService;
 
     public AdminController(UserService userService,
@@ -22,12 +24,14 @@ public class AdminController {
                            BuyerRequirementService requirementService,
                            OrderService orderService,
                            AnalyticsService analyticsService,
+                           MarketPriceService marketPriceService,
                            DemandInsightsService demandInsightsService) {
         this.userService = userService;
         this.cropListingService = cropListingService;
         this.requirementService = requirementService;
         this.orderService = orderService;
         this.analyticsService = analyticsService;
+        this.marketPriceService = marketPriceService;
         this.demandInsightsService = demandInsightsService;
     }
 
@@ -91,6 +95,12 @@ public class AdminController {
     public String orders(Model model) {
         model.addAttribute("orders", orderService.getAllOrders());
         return "admin/orders";
+    }
+
+    @GetMapping("/market-data")
+    public String marketData(Model model) {
+        model.addAttribute("marketPrices", marketPriceService.getAllMarketPrices());
+        return "admin/market-data";
     }
 
     @GetMapping("/analytics")
