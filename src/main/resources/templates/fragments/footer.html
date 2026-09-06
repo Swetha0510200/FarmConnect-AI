@@ -1,60 +1,52 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<footer th:fragment="footer" class="footer-farm">
+<body>
+<footer th:fragment="footer" class="mt-auto">
     <div class="container">
         <div class="row g-4 mb-4">
             <div class="col-lg-4">
                 <div class="d-flex align-items-center gap-2 mb-2">
-                    <div class="brand-icon-box" style="width: 32px; height: 32px; font-size: 1rem;">
-                        <i class="bi bi-tree"></i>
-                    </div>
-                    <h5 class="text-white fw-bold mb-0">FarmConnect AI</h5>
+                    <span class="fs-4 fw-bold text-success">FarmConnect AI</span>
                 </div>
-                <p class="small text-white-50 mb-3">
-                    AI-powered direct farmer-to-buyer marketplace and transparent supply chain platform. Designed for Smart India Hackathon 2026 (SIH26033).
+                <p class="text-muted small">
+                    AI-powered farmer-to-buyer marketplace and transparent supply chain coordination platform designed to empower farmers with fair pricing and direct buyer connections.
                 </p>
-                <div class="d-flex gap-2">
-                    <span class="badge bg-success-subtle text-success border border-success-subtle">Java 17</span>
-                    <span class="badge bg-success-subtle text-success border border-success-subtle">Spring Boot 3</span>
-                    <span class="badge bg-success-subtle text-success border border-success-subtle">MySQL 8</span>
+                <div class="badge bg-success-subtle text-success border border-success-subtle small py-1 px-2">
+                    Smart India Hackathon 2026 ? SIH26033
                 </div>
             </div>
-
             <div class="col-6 col-lg-2">
-                <h6>For Farmers</h6>
+                <h6 class="fw-bold mb-3 text-dark">For Farmers</h6>
                 <ul class="list-unstyled small d-flex flex-column gap-2">
-                    <li><a th:href="@{/farmer/crops}"><i class="bi bi-chevron-right me-1"></i> List Crops</a></li>
-                    <li><a th:href="@{/farmer/dashboard}"><i class="bi bi-chevron-right me-1"></i> Suitable Buyers</a></li>
-                    <li><a th:href="@{/farmer/orders}"><i class="bi bi-chevron-right me-1"></i> Manage Orders</a></li>
-                    <li><a th:href="@{/farmer/analytics}"><i class="bi bi-chevron-right me-1"></i> Sales Analytics</a></li>
+                    <li><a th:href="@{/auth/register-farmer}" class="text-decoration-none text-muted">Farmer Registration</a></li>
+                    <li><a th:href="@{/farmer/crops}" class="text-decoration-none text-muted">List Your Crops</a></li>
+                    <li><a th:href="@{/farmer/buyer-matches}" class="text-decoration-none text-muted">Find Suitable Buyers</a></li>
+                   
                 </ul>
             </div>
-
             <div class="col-6 col-lg-2">
-                <h6>For Buyers</h6>
+                <h6 class="fw-bold mb-3 text-dark">For Buyers</h6>
                 <ul class="list-unstyled small d-flex flex-column gap-2">
-                    <li><a th:href="@{/buyer/search-crops}"><i class="bi bi-chevron-right me-1"></i> Browse Crops</a></li>
-                    <li><a th:href="@{/buyer/add-requirement}"><i class="bi bi-chevron-right me-1"></i> Post Demands</a></li>
-                    <li><a th:href="@{/buyer/orders}"><i class="bi bi-chevron-right me-1"></i> Track Purchases</a></li>
-                    <li><a th:href="@{/insights/demand}"><i class="bi bi-chevron-right me-1"></i> Demand Trends</a></li>
+                    <li><a th:href="@{/auth/register-buyer}" class="text-decoration-none text-muted">Buyer Registration</a></li>
+                    <li><a th:href="@{/buyer/search-crops}" class="text-decoration-none text-muted">Search Farmer Crops</a></li>
+                    <li><a th:href="@{/buyer/requirements}" class="text-decoration-none text-muted">Post Requirement</a></li>
+                    <li><a th:href="@{/insights/demand}" class="text-decoration-none text-muted">Demand Insights</a></li>
                 </ul>
             </div>
-
             <div class="col-lg-4">
-                <h6>P2P Marketplace Disclaimers</h6>
-                <p class="small text-white-50 mb-2">
-                    <i class="bi bi-shield-check text-success me-1"></i> <strong>Direct Payments:</strong> FarmConnect does not collect or hold payments. Payments are made directly to the farmer via Cash, UPI, or Bank Transfer.
-                </p>
-                <p class="small text-white-50 mb-0">
-                    <i class="bi bi-truck text-success me-1"></i> <strong>Logistics:</strong> Transportation is coordinated directly between the farmer and buyer.
-                </p>
+                <h6 class="fw-bold mb-3 text-dark">Direct Marketplace Disclaimer</h6>
+                <div class="disclaimer-box small">
+                    <p class="mb-1"><strong><i class="bi bi-shield-check me-1"></i> Direct P2P Coordination:</strong> FarmConnect is a digital marketplace & coordination platform. Payment and transportation are handled directly between the buyer and farmer.</p>
+                </div>
             </div>
         </div>
-
-        <div class="pt-3 border-top border-secondary border-opacity-25 d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 small text-white-50">
-            <div>&copy; 2026 FarmConnect AI (SIH26033). All rights reserved.</div>
-            <div>Built for Smart India Hackathon &amp; College CS Mini Project.</div>
+        <div class="border-top pt-3 d-flex flex-column flex-md-row justify-content-between align-items-center text-muted small">
+            <div>&copy; 2026 FarmConnect AI. All rights reserved. Built with Java 17 &amp; Spring Boot.</div>
+            <div class="mt-2 mt-md-0">
+                <span>College Computer Science Project ? SIH26033</span>
+            </div>
         </div>
     </div>
 </footer>
+</body>
 </html>
