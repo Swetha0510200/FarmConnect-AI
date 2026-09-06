@@ -6,9 +6,7 @@
 
 ---
 
-LIVE DEMO
 
- https://farmconnect-ai-8.onrender.com
 
 ##  Project Overview
 
