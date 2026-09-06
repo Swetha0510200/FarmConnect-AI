@@ -6,7 +6,11 @@
 
 ---
 
-## ?? Project Overview
+LIVE DEMO
+
+ https://farmconnect-ai-8.onrender.com
+
+##  Project Overview
 
 **FarmConnect AI** is a digital agricultural marketplace and transparent coordination platform that directly connects farmers and Farmer Producer Organizations (FPOs) with verified bulk buyers (wholesalers, retailers, food processors, exporters, and institutions).
 
