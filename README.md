@@ -6,9 +6,8 @@
 
 ---
 
-DEMO LINK:
- https://farmconnect-ai-8.onrender.com
- https://drive.google.com/file/d/1POOHsrodWIipiqvPYyj9nkxzPDmZgrVm/view?usp=sharing
+DEMO LINK: https://farmconnect-ai-8.onrender.com
+PROTOTYPE LINK: https://drive.google.com/file/d/1POOHsrodWIipiqvPYyj9nkxzPDmZgrVm/view?usp=sharing
 
 ##  Project Overview
 
